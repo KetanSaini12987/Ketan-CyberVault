@@ -64,7 +64,8 @@ nmap 192.168.1.1
 
 # Scan Techniques 
 
-##Option	Scan Type
+## Option	Scan Type
+
 -sT	TCP Connect Scan
 -sS	SYN Stealth Scan
 -sF	FIN Scan
