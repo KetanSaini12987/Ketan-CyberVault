@@ -1,216 +1,155 @@
-╔══════════════════════════════════════════════════════════════╗
-║                 JOHN THE RIPPER & HASH CRACKING            ║
-╚══════════════════════════════════════════════════════════════╝
+# John The Ripper & Hash Cracking
 
-[ PURPOSE ]
-John the Ripper is a password cracking tool used to recover
-passwords from hashes, encrypted archives, SSH keys, and more.
+## Hash Identification
+Check hash type first:
 
-Hashcat is a faster alternative (GPU based) for many hash types.
-
-================================================================
-1. HASH IDENTIFICATION
-================================================================
-
-Use these tools before cracking to detect hash format.
-
-Command:
 hashid <hash>
 
-Example:
-hashid 5f4dcc3b5aa765d61d8327deb882cf99
+OR
 
-Alternative:
 cd Downloads/hash-identifiers
 python3 hash-id.py
 
-Common Hash Types:
-MD5       SHA1       SHA256       NTLM       bcrypt
+Salting means random extra data is added before hashing.
 
-Note:
-Salting means extra random data is added before hashing.
+------------------------------------------------------------
 
-================================================================
-2. BASIC JOHN USAGE
-================================================================
+## Basic John Commands
 
-Syntax:
-john --format=<type> --wordlist=<wordlist> <hashfile>
+Crack MD5 hash:
 
-Examples:
-
-john --format=raw-md5 \
---wordlist=/usr/share/wordlists/rockyou.txt hash.txt
-
-john --format=raw-sha256 \
---wordlist=/usr/share/wordlists/rockyou.txt hash.txt
-
-john --format=nt \
---wordlist=/usr/share/wordlists/rockyou.txt hash.txt
+john --format=raw-md5 --wordlist=/usr/share/wordlists/rockyou.txt hash.txt
 
 Show cracked password:
-john --show hash.txt
 
-================================================================
-3. IMPORTANT JOHN OPTIONS
-================================================================
+john --show --format=raw-md5 hash.txt
 
---fork=4
-Use 4 CPU processes for faster cracking
+General syntax:
 
---rules
-Modify words automatically
-(admin -> admin123, Admin@1, etc.)
-
---incremental
-Pure brute-force mode
-
---verbosity=5
-Detailed output
+john --format=<type> hash.txt --wordlist=/usr/share/wordlists/rockyou.txt
 
 Examples:
 
-john --fork=4 hash.txt
+john --format=nt hash.txt --wordlist=/usr/share/wordlists/rockyou.txt
+john --format=raw-sha256 hash.txt --wordlist=/usr/share/wordlists/rockyou.txt
 
-john --rules \
---wordlist=/usr/share/wordlists/rockyou.txt hash.txt
+------------------------------------------------------------
+
+## Useful John Options
+
+Use CPU cores:
+
+john --fork=4 --format=raw-md5 --wordlist=/usr/share/wordlists/rockyou.txt hash.txt
+
+Use rules:
+
+john --rules --format=raw-md5 --wordlist=/usr/share/wordlists/rockyou.txt hash.txt
+
+Brute force:
 
 john --incremental hash.txt
 
-================================================================
-4. HASHCAT QUICK GUIDE
-================================================================
+Verbose mode:
 
-Syntax:
-hashcat -m <mode> -a <attack> hash.txt <wordlist>
+john --verbosity=5 --format=raw-md5 --wordlist=/usr/share/wordlists/rockyou.txt hash.txt
 
-Attack Modes:
--a 0   Dictionary attack
--a 3   Brute force / mask attack
--a 6   Wordlist + suffix mask
--a 7   Prefix mask + wordlist
+------------------------------------------------------------
 
-Common Modes:
--m 0      MD5
--m 1000   NTLM
--m 1400   SHA256
--m 1800   SHA512crypt
--m 3200   bcrypt
+## Hashcat Alternative
 
-Examples:
+MD5:
 
-hashcat -m 0 -a 0 hash.txt rockyou.txt
+hashcat -m 0 -a 0 hash.txt /usr/share/wordlists/rockyou.txt
 
-hashcat -m 1000 -a 0 hash.txt rockyou.txt
+NTLM:
+
+hashcat -m 1000 -a 0 hash.txt /usr/share/wordlists/rockyou.txt
+
+SHA512 Crypt:
+
+hashcat -m 1800 -a 0 hash.txt /usr/share/wordlists/rockyou.txt --force
+
+bcrypt (4 lowercase letters):
 
 hashcat -m 3200 -a 3 hash.txt ?l?l?l?l
 
-================================================================
-5. ZIP / RAR PASSWORD CRACKING
-================================================================
+------------------------------------------------------------
 
-Extract hash first:
+## Archive Hash Extraction
 
-zip2john file.zip > hash.txt
+RAR:
+
 rar2john file.rar > hash.txt
 
-Then crack:
+ZIP:
 
-john hash.txt --wordlist=/usr/share/wordlists/rockyou.txt
+zip2john file.zip > hash.txt
 
-================================================================
-6. SYSTEM FILES (LINUX)
-================================================================
+SSH Private Key:
+
+ssh2john id_rsa > hash.txt
+
+PDF:
+
+pdf2john file.pdf > hash.txt
+
+------------------------------------------------------------
+
+## Linux Enumeration
+
+Users list:
 
 cat /etc/passwd
-= user accounts list
 
-/etc/shadow
-= password hashes (root only)
-
-================================================================
-7. TRYHACKME STYLE EXAMPLES
-================================================================
-
-[ SHA256 ]
-
-john --format=raw-sha256 \
---wordlist=/usr/share/wordlists/rockyou.txt hash.txt
-
----------------------------------------------------------------
-
-[ NTLM ]
-
-hashcat -m 1000 -a 0 hash.txt \
-/usr/share/wordlists/rockyou.txt
-
----------------------------------------------------------------
-
-[ bcrypt ]
-
-hashcat -m 3200 -a 3 hash.txt ?l?l?l?l
-
-= tries all 4 lowercase combinations
-
----------------------------------------------------------------
-
-[ Salted SHA1 ]
-
-File format:
-hash:salt
-
-hashcat -m 160 -a 0 hash.txt \
-/usr/share/wordlists/rockyou.txt
-
-================================================================
-8. SSH PRIVATE KEY CRACKING
-================================================================
-
-Convert key:
-
-ssh2john.py id_rsa > keyhash.txt
-
-Crack key:
-
-john keyhash.txt \
---wordlist=/usr/share/wordlists/rockyou.txt
-
-Login after cracking:
-
-ssh -i id_rsa user@ip
-
-================================================================
-9. LINPEAS WORKFLOW
-================================================================
-
-Run script:
+Run LinPEAS:
 
 ./linpeas.sh
 
 Save output:
 
-./linpeas.sh | tee output.txt
+./linpeas.sh | tee linpeas-output.txt
 
-Use it to find:
-- weak permissions
-- sudo rights
-- passwords
-- SSH keys
-- privilege escalation paths
+Copy file through SCP:
 
-================================================================
-10. QUICK REVISION
-================================================================
+scp linpeas.sh user@IP:/dev/shm
 
-Detect hash        -> hashid
-Crack hash         -> john / hashcat
-Show password      -> john --show
-ZIP crack          -> zip2john + john
-RAR crack          -> rar2john + john
-SSH key crack      -> ssh2john + john
-Bruteforce         -> --incremental
-Word mutations     -> --rules
+------------------------------------------------------------
 
-╔══════════════════════════════════════════════════════════════╗
-║                     END OF NOTES                            ║
-╚══════════════════════════════════════════════════════════════╝
+## Practical Examples
+
+SHA256:
+
+john --format=raw-sha256 hash.txt --wordlist=/usr/share/wordlists/rockyou.txt
+
+MD4:
+
+john --format=raw-md4 --rules --wordlist=/usr/share/wordlists/rockyou.txt hash.txt
+
+Rule based SHA256:
+
+john --format=raw-sha256 --rules --wordlist=/usr/share/wordlists/rockyou.txt hash1.txt
+
+Single rules mode:
+
+john --rules=single --wordlist=wordlist.txt pdf.hash
+
+------------------------------------------------------------
+
+## SSH Key Crack Flow
+
+ssh2john id_rsa > forjohn.txt
+
+john forjohn.txt --wordlist=/usr/share/wordlists/rockyou.txt
+
+ssh -i id_rsa user@IP
+
+------------------------------------------------------------
+
+## Notes
+
+rockyou.txt location:
+
+/usr/share/wordlists/rockyou.txt
+
+John is best for hashes, archives, keys, PDFs.  
+Hashcat is faster with GPU support.
