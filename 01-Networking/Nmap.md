@@ -66,15 +66,15 @@ nmap 192.168.1.1
 
 ## Option	Scan Type
 
--sT	TCP Connect Scan
--sS	SYN Stealth Scan
--sF	FIN Scan
--sX	Xmas Scan
--sN	Null Scan
--sU	UDP Scan
--sA	ACK Scan
--sn	Ping Scan / Host Discovery
--sV	Service Version Detection
+* -sT	TCP Connect Scan
+* -sS	SYN Stealth Scan
+* -sF	FIN Scan
+* -sX	Xmas Scan
+* -sN	Null Scan
+* -sU	UDP Scan
+* -sA	ACK Scan
+* -sn	Ping Scan / Host Discovery
+* -sV	Service Version Detection
 
 ## Important Options
 
