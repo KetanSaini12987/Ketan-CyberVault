@@ -1,56 +1,68 @@
 # NESSUS
 
-## What is Nessus?
-Nessus is a vulnerability assessment tool used to scan systems, networks, and web applications for security weaknesses.  
-It helps identify misconfigurations, missing patches, and known vulnerabilities.
+## What is Nessus
+Nessus is a vulnerability scanner used to detect security weaknesses in systems, networks, and applications. It is similar to Nmap but focuses on vulnerability assessment.
 
 ---
 
-## Starting Nessus Service (Kali Linux)
+## Starting Nessus Service
 
-### 1. Start Nessus Service
-
-```
+### Start Nessus
+```bash
 sudo systemctl start nessusd.service
 ```
 
----
-
-### 2. Check Service Status
-
-```
+### Check Status
+```bash
 sudo systemctl status nessusd
 ```
 
-- Ensures Nessus service is running properly
+### Enable on Boot (Optional)
+```bash
+sudo systemctl enable nessusd.service
+```
 
 ---
 
 ## Access Nessus Web Interface
 
-1. Open browser and visit:
-
-```
+Open in browser:
+```text
 https://localhost:8834/
 ```
 
-- Nessus runs on HTTPS port **8834**
+If remote system:
+```text
+https://<target-ip>:8834/
+```
 
 ---
 
-## Nessus Setup Flow (First Time)
+## Nessus Setup Steps
 
-1. Open web interface
-2. Create admin account
-3. Enter activation code (from Tenable)
-4. Download required plugins
-5. Wait for plugin compilation
+1. Open browser and visit:
+```text
+https://localhost:8834/
+```
+
+2. Create account:
+- Admin username
+- Password
+
+3. Choose edition:
+- Nessus Essentials (free)
+- Nessus Professional (paid)
+
+4. Activate with activation code (Essentials key required)
+
+5. Wait for plugin download and initialization
 
 ---
 
-## Basic Usage Workflow
+## Basic Nessus Workflow
 
-### 1. Create a New Scan
+### 1. Create New Scan
+- Click "New Scan"
 - Choose scan type:
   - Basic Network Scan
   - Advanced Scan
@@ -58,106 +70,98 @@ https://localhost:8834/
 
 ---
 
-### 2. Target Input
+### 2. Configure Scan
 
-```
-192.168.1.1
-```
-
-or
-
-```
-192.168.1.0/24
-```
-
-or
-
-```
-example.com
+Example settings:
+```text
+Name: Test Scan
+Target: 192.168.1.10
 ```
 
 ---
 
-### 3. Run Scan
-- Click **Launch**
-- Wait for vulnerability analysis
+### 3. Launch Scan
+- Click "Save"
+- Click "Launch"
 
 ---
 
-## Understanding Results
+### 4. View Results
+- Critical vulnerabilities (High risk)
+- Medium vulnerabilities
+- Low informational issues
 
-- **Critical** → Exploitable immediately
-- **High** → Serious vulnerabilities
-- **Medium** → Misconfigurations / weak points
-- **Low** → Informational issues
+---
+
+## Nessus Scan Types
+
+| Scan Type | Description |
+|----------|-------------|
+| Basic Network Scan | General vulnerability scan |
+| Advanced Scan | Custom scan with full control |
+| Web Application Scan | Web-based vulnerability testing |
+| Malware Scan | Detects malicious files |
+| Compliance Scan | Checks system policy compliance |
 
 ---
 
 ## Important Nessus Features
 
-### 1. Plugin System
-- Uses vulnerability plugins
-- Each plugin checks specific CVEs
+### Plugin System
+- Nessus uses plugins to detect vulnerabilities
+- Plugins are updated regularly
 
 ---
 
-### 2. Report Generation
-
+### Report Export
+```text
+HTML → Easy viewing
+PDF → Documentation
+CSV → Data analysis
 ```
-HTML / PDF / CSV
-```
-
-- Used for documentation and reporting
 
 ---
 
-### 3. Export Report
-- Useful for:
-  - Penetration testing reports
-  - Compliance audits
+## Common Use Cases
+
+- Finding outdated software
+- Detecting open vulnerable ports
+- Checking misconfigurations
+- Identifying CVEs
+- Compliance auditing
 
 ---
 
-## Useful Linux Commands (Related to Nessus)
+## Example Attack Flow (Ethical Testing)
 
-### Restart Nessus
+1. Scan target using Nessus
+2. Identify vulnerabilities
+3. Cross-check with Nmap
+4. Verify exploitability manually
+5. Report findings
 
+---
+
+## Extra Useful Commands (Linux support check)
+
+Check if Nessus is running:
+```bash
+ps aux | grep nessus
 ```
+
+Restart service:
+```bash
 sudo systemctl restart nessusd.service
 ```
 
----
-
-### Stop Nessus
-
-```
+Stop service:
+```bash
 sudo systemctl stop nessusd.service
 ```
 
 ---
 
-### Enable Nessus on Boot
-
-```
-sudo systemctl enable nessusd.service
-```
-
----
-
-## Nessus Default Port
-
-```
-8834
-```
-
-- Always accessed via HTTPS:
-```
-https://localhost:8834
-```
-
----
-
 ## Notes
-- Nessus requires high system resources during scans
-- Plugin updates must be kept current for accurate results
-- Always scan authorized systems only
+- Nessus runs on port `8834`
+- Always use in authorized environments only
+- Best used with Nmap for full recon + vuln assessment combo
